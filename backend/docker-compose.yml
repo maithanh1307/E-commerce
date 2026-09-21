@@ -6,7 +6,6 @@ services:
 
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: ecommerce_auth
       MYSQL_USER: ecommerce
       MYSQL_PASSWORD: password123
 
