@@ -7,14 +7,37 @@ spring:
 
   cloud:
     gateway:
-      routes:
+      server:
+        webflux:
+          routes:
 
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/api/auth/**
+            - id: auth-service
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/auth/**
+
+            - id: product-service
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/products/**
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    gateway:
+      access: unrestricted
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
