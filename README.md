@@ -1,37 +1,37 @@
 # E-commerce
 ** BACKEND
-1. Run Authentication Service:
+1. Service Registry:
+    - Open the IntelliJ IDEA to run java service: run Registry Service
+    - Open the Docker Desktop and CMD to enter 'docker compose up -d'
+
+2. Run Authentication Service:
     * Run MySql for auth-service
-    - Open docker desktop
-    - Return to the project, open the CMD to 'cd backend'
-    - Enter 'docker compose up -d'
     - Enter this command to run data:
         Get-Content .\docker\mysql\auth\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
         Get-Content .\docker\mysql\auth\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
     * Run Service
     - Open the IntelliJ IDEA to run java service: should run Registry Service first, then run Auth Service
 
-2. Run Product Service:
-    * Run MySql for product-service
-        - Open docker desktop
-        - Return to the project, open the CMD to 'cd backend'
-        - Enter 'docker compose up -d'
-        - Enter this command to run data:
-            Get-Content .\docker\mysql\product\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
-            Get-Content .\docker\mysql\product\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
-        * Run Service
-        - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service
+3. Run Product Service:
+    - Enter this command to run data:
+        Get-Content .\docker\mysql\product\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+        Get-Content .\docker\mysql\product\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+    * Run Service
+    - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service
 
-3. Run Inventory Service:
-    * Run MySql for inventory-service
-        - Open docker desktop
-        - Return to the project, open the CMD to 'cd backend'
-        - Enter 'docker compose up -d'
-        - Enter this command to run data:
-            Get-Content .\docker\mysql\inventory\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
-            Get-Content .\docker\mysql\inventory\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
-        * Run Service
-        - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service -> Inventory Service
+4. Run Inventory Service:
+    - Enter this command to run data:
+        Get-Content .\docker\mysql\inventory\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+        Get-Content .\docker\mysql\inventory\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+    * Run Service
+    - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service -> Inventory Service
+
+5. Run Cart Service:
+    - Enter this command to run data:
+        Get-Content .\docker\mysql\cart\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+        Get-Content .\docker\mysql\cart\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+    * Run Service
+    - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service -> Inventory Service -> Cart Service
 
 ** API GATEWAY
 - To run Api Gateway, you should run 'docker compose up -d' and service registry -> auth-service -> product-service
@@ -39,6 +39,7 @@
     + if test auth-service : localhost:8080/api/auth/**
     + if test product-service : localhost:8080/api/product/**
     + if test inventory-service : localhost:8080/api/inventory/**
+    + if test cart-service : localhost:8080/api/cart/**
 
 **NOTE:
 - If you have the error about 'ecommerce%...' when run other service you should do some steps:
@@ -50,4 +51,4 @@
         GRANT ALL PRIVILEGES ON ecommerce_inventory.* TO 'ecommerce'@'%';
         FLUSH PRIVILEGES;
     + then enter 'exit'
-- If you complete all steps, you can return to the auth-service to run and move on to run other service
+- If you complete all steps, you can return to the this service to run and move on to run other service
