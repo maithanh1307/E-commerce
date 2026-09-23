@@ -26,6 +26,11 @@ spring:
               predicates:
                 - Path=/api/inventory/**
 
+            - id: cart-service
+              uri: http://localhost:8084
+              predicates:
+                - Path=/api/cart/**
+
 eureka:
   client:
     service-url:
