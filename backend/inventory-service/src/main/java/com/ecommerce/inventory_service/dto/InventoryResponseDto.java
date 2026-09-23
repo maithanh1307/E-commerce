@@ -1,0 +1,20 @@
+package com.ecommerce.inventory_service.dto;
+
+import lombok.*;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class InventoryResponseDto {
+    private Long id;
+
+    private Long productId;
+
+    private Integer quantity;
+
+    private Integer reservedQuantity;
+
+    private Integer availableQuantity;
+}

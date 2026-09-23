@@ -35,6 +35,7 @@
         CREATE USER IF NOT EXISTS 'ecommerce'@'%' IDENTIFIED BY 'password123';
         GRANT ALL PRIVILEGES ON ecommerce_auth.* TO 'ecommerce'@'%';
         GRANT ALL PRIVILEGES ON ecommerce_product.* TO 'ecommerce'@'%';
+        GRANT ALL PRIVILEGES ON ecommerce_inventory.* TO 'ecommerce'@'%';
         FLUSH PRIVILEGES;
     + then enter 'exit'
 - If you complete all steps, you can return to the auth-service to run and move on to run other service
