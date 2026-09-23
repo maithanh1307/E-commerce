@@ -2,6 +2,12 @@ CREATE DATABASE IF NOT EXISTS ecommerce_inventory
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
+GRANT ALL PRIVILEGES
+ON ecommerce_inventory.*
+TO 'ecommerce'@'%';
+
+FLUSH PRIVILEGES;
+
 USE ecommerce_inventory;
 
 CREATE TABLE IF NOT EXISTS inventory (

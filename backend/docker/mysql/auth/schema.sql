@@ -2,6 +2,12 @@ CREATE DATABASE IF NOT EXISTS ecommerce_auth
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
+GRANT ALL PRIVILEGES
+ON ecommerce_auth.*
+TO 'ecommerce'@'%';
+
+FLUSH PRIVILEGES;
+
 USE ecommerce_auth;
 
 
