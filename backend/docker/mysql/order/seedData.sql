@@ -1,6 +1,6 @@
--- ============================================
--- ORDERS SEED DATA
--- ============================================
+USE ecommerce_order;
+
+DELETE FROM orders;
 
 INSERT INTO orders (
     id,

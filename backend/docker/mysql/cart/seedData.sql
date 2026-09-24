@@ -1,5 +1,6 @@
 USE ecommerce_cart;
 
+DELETE FROM cart_items;
 DELETE FROM carts;
 
 INSERT INTO carts (
@@ -8,8 +9,7 @@ INSERT INTO carts (
 ) VALUES
     (1, 1),
     (2, 2),
-    (3, 3),
-
+    (3, 3);
 
 INSERT INTO cart_items (
     id,
@@ -30,6 +30,5 @@ INSERT INTO cart_items (
 -- User 3
 (6, 3, 6, 1),
 (7, 3, 7, 2),
-(8, 3, 9, 1),
-
+(8, 3, 9, 1);
 
