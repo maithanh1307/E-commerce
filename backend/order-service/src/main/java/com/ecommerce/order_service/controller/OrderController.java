@@ -48,4 +48,12 @@ public class OrderController {
                 orderId
         );
     }
+
+    @PutMapping("/{userId}/{orderId}/paid")
+    public OrderResponseDto markAsPaid(
+            @PathVariable Long userId,
+            @PathVariable Long orderId) {
+
+        return orderService.markAsPaid(userId, orderId);
+    }
 }
