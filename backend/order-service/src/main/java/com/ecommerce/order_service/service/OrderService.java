@@ -226,6 +226,34 @@ public class OrderService {
         return toResponse(order);
     }
 
+    @Transactional
+    public OrderResponseDto markAsPaid(Long userId, Long orderId) {
+
+        Order order = orderRepository
+                .findByIdAndUserId(orderId, userId)
+                .orElseThrow(
+                        () -> new RuntimeException(
+                                "Order not found"
+                        )
+                );
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new RuntimeException(
+                    "Cancelled order cannot be paid"
+            );
+        }
+
+        if (order.getStatus() == OrderStatus.PAID) {
+            return toResponse(order);
+        }
+
+        order.setStatus(OrderStatus.PAID);
+
+        Order savedOrder = orderRepository.save(order);
+
+        return toResponse(savedOrder);
+    }
+
     private void releaseReservedStock(CartResponseDto cart, List<Long> reservedProducts) {
 
         if (cart == null
