@@ -475,29 +475,54 @@ public class OrderService {
         }
     }
 
+//    private OrderResponseDto toResponse(Order order) {
+//
+//        return OrderResponseDto.builder()
+//                .id(order.getId())
+//                .userId(order.getUserId())
+//                .status(order.getStatus())
+//                .totalAmount(
+//                        order.getTotalAmount()
+//                )
+//                .items(
+//                        order.getItems()
+//                                .stream()
+//                                .map(
+//                                        this::toItemResponse
+//                                )
+//                                .toList()
+//                )
+//                .createdAt(
+//                        order.getCreatedAt()
+//                )
+//                .updatedAt(
+//                        order.getUpdatedAt()
+//                )
+//                .build();
+//    }
+
     private OrderResponseDto toResponse(Order order) {
 
         return OrderResponseDto.builder()
                 .id(order.getId())
                 .userId(order.getUserId())
                 .status(order.getStatus())
-                .totalAmount(
-                        order.getTotalAmount()
-                )
+
+                .subtotal(order.getSubtotal())
+                .discountAmount(order.getDiscountAmount())
+                .promotionCode(order.getPromotionCode())
+
+                .totalAmount(order.getTotalAmount())
+
                 .items(
                         order.getItems()
                                 .stream()
-                                .map(
-                                        this::toItemResponse
-                                )
+                                .map(this::toItemResponse)
                                 .toList()
                 )
-                .createdAt(
-                        order.getCreatedAt()
-                )
-                .updatedAt(
-                        order.getUpdatedAt()
-                )
+
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
                 .build();
     }
 
