@@ -72,18 +72,3 @@ INSERT INTO promotions (
     '2026-12-31 23:59:59',
     'INACTIVE'
 );
-
-(
-    5,
-    'NEWPROMO',
-    'New promotion',
-    'PERCENTAGE',
-    20.00,
-    20000.00,
-    50000.00,
-    100,
-    0,
-    '2026-01-01 00:00:00',
-    '2026-12-31 23:59:59',
-    'INACTIVE'
-);
