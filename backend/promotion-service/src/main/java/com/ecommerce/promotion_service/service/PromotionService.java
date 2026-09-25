@@ -182,86 +182,210 @@ public class PromotionService {
         return toResponse(saved);
     }
 
-    @Transactional(readOnly = true)
-    public PromotionValidationResponseDto validatePromotion(ValidatePromotionRequestDto request) {
+//    @Transactional(readOnly = true)
+//    public PromotionValidationResponseDto validatePromotion(ValidatePromotionRequestDto request) {
+//
+//        String code = normalizeCode(request.getCode());
+//
+//        Promotion promotion = promotionRepository
+//                .findByCode(code)
+//                .orElseThrow(() ->
+//                        new RuntimeException(
+//                                "Promotion code not found: " + code
+//                        )
+//                );
+//
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        // Check status
+//        if (promotion.getStatus()
+//                != PromotionStatus.ACTIVE) {
+//
+//            throw new RuntimeException(
+//                    "Promotion is inactive"
+//            );
+//        }
+//
+//        // Check start date
+//        if (now.isBefore(promotion.getStartAt())) {
+//
+//            throw new RuntimeException(
+//                    "Promotion has not started yet"
+//            );
+//        }
+//
+//        // Check end date
+//        if (now.isAfter(promotion.getEndAt())) {
+//
+//            throw new RuntimeException(
+//                    "Promotion has expired"
+//            );
+//        }
+//
+//        // Check usage limit
+//        if (promotion.getUsageLimit() != null
+//                && promotion.getUsedCount()
+//                >= promotion.getUsageLimit()) {
+//
+//            throw new RuntimeException(
+//                    "Promotion usage limit has been reached"
+//            );
+//        }
+//
+//        // Check minimum order
+//        if (request.getOrderAmount()
+//                .compareTo(
+//                        promotion.getMinimumOrderAmount()
+//                ) < 0) {
+//
+//            throw new RuntimeException(
+//                    "Order amount does not meet minimum requirement: "
+//                            + promotion.getMinimumOrderAmount()
+//            );
+//        }
+//
+//        BigDecimal discountAmount =
+//                calculateDiscount(
+//                        promotion,
+//                        request.getOrderAmount()
+//                );
+//
+//        BigDecimal finalAmount =
+//                request.getOrderAmount()
+//                        .subtract(discountAmount);
+//
+//        return PromotionValidationResponseDto.builder()
+//                .valid(true)
+//                .code(promotion.getCode())
+//                .message("Promotion is valid")
+//                .orderAmount(request.getOrderAmount())
+//                .discountAmount(discountAmount)
+//                .finalAmount(finalAmount)
+//                .build();
+//    }
+    public PromotionValidationResponseDto validatePromotion(
+            ValidatePromotionRequestDto request) {
 
-        String code = normalizeCode(request.getCode());
+        String code = request.getCode()
+                .trim()
+                .toUpperCase();
 
-        Promotion promotion = promotionRepository
-                .findByCode(code)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Promotion code not found: " + code
-                        )
-                );
+        Promotion promotion =
+                promotionRepository.findByCode(code)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Promotion not found: " + code
+                                )
+                        );
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now =
+                LocalDateTime.now();
 
-        // Check status
         if (promotion.getStatus()
                 != PromotionStatus.ACTIVE) {
 
-            throw new RuntimeException(
-                    "Promotion is inactive"
+            return new PromotionValidationResponseDto(
+                    false,
+                    code,
+                    "Promotion is inactive",
+                    request.getOrderAmount(),
+                    BigDecimal.ZERO,
+                    request.getOrderAmount()
             );
         }
 
-        // Check start date
-        if (now.isBefore(promotion.getStartAt())) {
+        if (now.isBefore(promotion.getStartAt())
+                || now.isAfter(promotion.getEndAt())) {
 
-            throw new RuntimeException(
-                    "Promotion has not started yet"
+            return new PromotionValidationResponseDto(
+                    false,
+                    code,
+                    "Promotion is expired or not started",
+                    request.getOrderAmount(),
+                    BigDecimal.ZERO,
+                    request.getOrderAmount()
             );
         }
 
-        // Check end date
-        if (now.isAfter(promotion.getEndAt())) {
-
-            throw new RuntimeException(
-                    "Promotion has expired"
-            );
-        }
-
-        // Check usage limit
         if (promotion.getUsageLimit() != null
                 && promotion.getUsedCount()
                 >= promotion.getUsageLimit()) {
 
-            throw new RuntimeException(
-                    "Promotion usage limit has been reached"
+            return new PromotionValidationResponseDto(
+                    false,
+                    code,
+                    "Promotion usage limit reached",
+                    request.getOrderAmount(),
+                    BigDecimal.ZERO,
+                    request.getOrderAmount()
             );
         }
 
-        // Check minimum order
         if (request.getOrderAmount()
                 .compareTo(
                         promotion.getMinimumOrderAmount()
                 ) < 0) {
 
-            throw new RuntimeException(
-                    "Order amount does not meet minimum requirement: "
-                            + promotion.getMinimumOrderAmount()
+            return new PromotionValidationResponseDto(
+                    false,
+                    code,
+                    "Order amount does not meet minimum requirement",
+                    request.getOrderAmount(),
+                    BigDecimal.ZERO,
+                    request.getOrderAmount()
             );
         }
 
-        BigDecimal discountAmount =
-                calculateDiscount(
-                        promotion,
-                        request.getOrderAmount()
-                );
+        BigDecimal discountAmount;
+
+        if (promotion.getDiscountType()
+                == DiscountType.PERCENTAGE) {
+
+            discountAmount =
+                    request.getOrderAmount()
+                            .multiply(
+                                    promotion.getDiscountValue()
+                            )
+                            .divide(
+                                    BigDecimal.valueOf(100)
+                            );
+
+            if (promotion.getMaximumDiscountAmount()
+                    != null
+                    && discountAmount.compareTo(
+                    promotion.getMaximumDiscountAmount()
+            ) > 0) {
+
+                discountAmount =
+                        promotion.getMaximumDiscountAmount();
+            }
+
+        } else {
+
+            discountAmount =
+                    promotion.getDiscountValue();
+        }
+
+        if (discountAmount.compareTo(
+                request.getOrderAmount()
+        ) > 0) {
+
+            discountAmount =
+                    request.getOrderAmount();
+        }
 
         BigDecimal finalAmount =
                 request.getOrderAmount()
                         .subtract(discountAmount);
 
-        return PromotionValidationResponseDto.builder()
-                .valid(true)
-                .code(promotion.getCode())
-                .message("Promotion is valid")
-                .orderAmount(request.getOrderAmount())
-                .discountAmount(discountAmount)
-                .finalAmount(finalAmount)
-                .build();
+        return new PromotionValidationResponseDto(
+                true,
+                code,
+                "Promotion is valid",
+                request.getOrderAmount(),
+                discountAmount,
+                finalAmount
+        );
     }
 
     private BigDecimal calculateDiscount(Promotion promotion, BigDecimal orderAmount) {
