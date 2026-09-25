@@ -24,7 +24,7 @@ public class PaymentService {
     public PaymentResponseDto createPayment(
             CreatePaymentRequestDto request) {
 
-        // 1. Check existing payment
+        // check exsiting payment
         paymentRepository
                 .findByOrderId(request.getOrderId())
                 .ifPresent(payment -> {
@@ -34,7 +34,7 @@ public class PaymentService {
                     );
                 });
 
-        // 2. Get order
+        // get order
         OrderResponseDto order =
                 orderClient.getOrder(
                         request.getUserId(),
@@ -47,7 +47,7 @@ public class PaymentService {
             );
         }
 
-        // 3. Check user
+        // check user
         if (!order.getUserId()
                 .equals(request.getUserId())) {
 
@@ -56,7 +56,7 @@ public class PaymentService {
             );
         }
 
-        // 4. Check order status
+        // check order status
         if (order.getStatus() !=
                 com.ecommerce.payment_service.entity.OrderStatus
                         .PENDING_PAYMENT) {
@@ -66,7 +66,7 @@ public class PaymentService {
             );
         }
 
-        // 5. Create payment
+        // create payment
         Payment payment = Payment.builder()
                 .orderId(order.getId())
                 .userId(order.getUserId())
@@ -122,54 +122,101 @@ public class PaymentService {
                 .toList();
     }
 
+//    @Transactional
+//    public PaymentResponseDto confirmPayment(
+//            Long id) {
+//
+//        Payment payment =
+//                paymentRepository.findById(id)
+//                        .orElseThrow(
+//                                () -> new RuntimeException(
+//                                        "Payment not found"
+//                                )
+//                        );
+//
+//        if (payment.getStatus() ==
+//                PaymentStatus.SUCCESS) {
+//
+//            return toResponse(payment);
+//        }
+//
+//        if (payment.getStatus() ==
+//                PaymentStatus.CANCELLED) {
+//
+//            throw new RuntimeException(
+//                    "Payment is cancelled"
+//            );
+//        }
+//
+//        // Mock transaction
+//        String transactionId =
+//                "MOCK-TXN-" +
+//                        UUID.randomUUID()
+//                                .toString()
+//                                .substring(0, 8)
+//                                .toUpperCase();
+//
+//        payment.setStatus(
+//                PaymentStatus.SUCCESS
+//        );
+//
+//        payment.setTransactionId(
+//                transactionId
+//        );
+//
+//        payment.setFailureReason(null);
+//
+//        Payment saved =
+//                paymentRepository.save(payment);
+//
+//        return toResponse(saved);
+//    }
+
     @Transactional
-    public PaymentResponseDto confirmPayment(
-            Long id) {
+    public PaymentResponseDto confirmPayment(Long paymentId) {
 
         Payment payment =
-                paymentRepository.findById(id)
-                        .orElseThrow(
-                                () -> new RuntimeException(
+                paymentRepository.findById(paymentId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
                                         "Payment not found"
                                 )
                         );
 
-        if (payment.getStatus() ==
-                PaymentStatus.SUCCESS) {
+        if (payment.getStatus()
+                == PaymentStatus.SUCCESS) {
 
             return toResponse(payment);
         }
 
-        if (payment.getStatus() ==
-                PaymentStatus.CANCELLED) {
+        if (payment.getStatus()
+                == PaymentStatus.CANCELLED) {
 
             throw new RuntimeException(
-                    "Payment is cancelled"
+                    "Cancelled payment cannot be confirmed"
             );
         }
 
-        // Mock transaction
         String transactionId =
-                "MOCK-TXN-" +
-                        UUID.randomUUID()
-                                .toString()
-                                .substring(0, 8)
-                                .toUpperCase();
+                "MOCK-TXN-"
+                        + UUID.randomUUID()
+                        .toString()
+                        .substring(0, 8)
+                        .toUpperCase();
 
-        payment.setStatus(
-                PaymentStatus.SUCCESS
-        );
+        payment.setTransactionId(transactionId);
+        payment.setStatus(PaymentStatus.SUCCESS);
 
-        payment.setTransactionId(
-                transactionId
-        );
-
-        payment.setFailureReason(null);
-
-        Payment saved =
+        Payment savedPayment =
                 paymentRepository.save(payment);
 
-        return toResponse(saved);
+        // Update Order -> PAID
+        orderClient.markOrderAsPaid(
+                payment.getUserId(),
+                payment.getOrderId()
+        );
+
+        return toResponse(savedPayment);
     }
 
     @Transactional

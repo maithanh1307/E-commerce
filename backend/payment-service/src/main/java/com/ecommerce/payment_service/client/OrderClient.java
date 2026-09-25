@@ -12,4 +12,10 @@ public interface OrderClient {
             @PathVariable("userId") Long userId,
             @PathVariable("orderId") Long orderId
     );
+
+    @PutMapping("/api/orders/{userId}/{orderId}/paid")
+    OrderResponseDto markOrderAsPaid(
+            @PathVariable("userId") Long userId,
+            @PathVariable("orderId") Long orderId
+    );
 }
