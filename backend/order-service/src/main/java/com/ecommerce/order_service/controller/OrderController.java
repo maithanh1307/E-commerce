@@ -1,5 +1,6 @@
 package com.ecommerce.order_service.controller;
 
+import com.ecommerce.order_service.dto.CreateOrderRequestDto;
 import com.ecommerce.order_service.dto.OrderResponseDto;
 import com.ecommerce.order_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +17,14 @@ public class OrderController {
 
     @PostMapping("/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderResponseDto createOrder(@PathVariable Long userId) {
+    public OrderResponseDto createOrder(
+            @PathVariable Long userId,
+            @RequestBody(required = false)
+            CreateOrderRequestDto request) {
 
         return orderService.createOrder(
-                userId
+                userId,
+                request
         );
     }
 

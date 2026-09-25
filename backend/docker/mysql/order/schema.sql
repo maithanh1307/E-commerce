@@ -71,3 +71,13 @@ CREATE TABLE IF NOT EXISTS order_items (
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE orders
+ADD COLUMN subtotal DECIMAL(12,2) NOT NULL DEFAULT 0
+AFTER status,
+
+ADD COLUMN discount_amount DECIMAL(12,2) NOT NULL DEFAULT 0
+AFTER subtotal,
+
+ADD COLUMN promotion_code VARCHAR(50)
+AFTER discount_amount;

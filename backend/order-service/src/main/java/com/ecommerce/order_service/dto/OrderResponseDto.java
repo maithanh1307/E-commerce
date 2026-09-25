@@ -18,6 +18,9 @@ public class OrderResponseDto {
     private OrderStatus status;
     private BigDecimal totalAmount;
     private List<OrderItemResponseDto> items;
+    private BigDecimal subtotal;
+    private BigDecimal discountAmount;
+    private String promotionCode;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
