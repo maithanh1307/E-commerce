@@ -40,6 +40,20 @@
     * Run Service
     - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service -> Inventory Service -> Cart Service - Order Service
 
+7. Run Payment Service:
+    - Enter this command to run data:
+        Get-Content .\docker\mysql\payment\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+        Get-Content .\docker\mysql\payment\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+    * Run Service
+    - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service -> Inventory Service -> Cart Service - Order Service
+
+8. Run Promotion Service:
+    - Enter this command to run data:
+        Get-Content .\docker\mysql\promotion\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+        Get-Content .\docker\mysql\promotion\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+    * Run Service
+    - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service -> Inventory Service -> Cart Service - Order Service
+
 ** API GATEWAY
 - To run Api Gateway, you should run 'docker compose up -d' and service registry -> auth-service -> product-service
 - then run api-gateway and test 'localhost:8080/api/...
