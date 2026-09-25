@@ -62,6 +62,8 @@
     + if test inventory-service : localhost:8080/api/inventory/**
     + if test cart-service : localhost:8080/api/cart/**
     + if test order-service : localhost:8080/api/orders/**
+    + if test payment-service : localhost:8080/api/payments/**
+    + if test promotion-service : localhost:8080/api/prmotions/**
 
 **NOTE:
 - If you have the error about 'ecommerce%...' when run other service you should do some steps:
