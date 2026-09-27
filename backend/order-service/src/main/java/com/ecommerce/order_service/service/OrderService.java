@@ -8,10 +8,15 @@ import com.ecommerce.order_service.dto.*;
 import com.ecommerce.order_service.entity.Order;
 import com.ecommerce.order_service.entity.OrderItem;
 import com.ecommerce.order_service.entity.OrderStatus;
+import com.ecommerce.order_service.event.EcommerceEvent;
+import com.ecommerce.order_service.event.KafkaEventPublisher;
 import com.ecommerce.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,6 +34,8 @@ public class OrderService {
     private final InventoryClient inventoryClient;
 
     private final PromotionClient promotionClient;
+
+    private final KafkaEventPublisher kafkaEventPublisher;
 
     @Transactional
 //    public OrderResponseDto createOrder(Long userId, CreateOrderRequestDto request) {
@@ -312,6 +319,26 @@ public class OrderService {
 
             Order savedOrder =
                     orderRepository.save(order);
+
+            // kafka
+            EcommerceEvent event = EcommerceEvent.builder()
+                    .eventId(UUID.randomUUID().toString())
+                    .eventType("ORDER_CREATED")
+                    .occurredAt(LocalDateTime.now())
+                    .userId(userId)
+                    .referenceId(savedOrder.getId())
+                    .referenceType("ORDER")
+                    .payload(Map.of(
+                            "totalAmount", savedOrder.getTotalAmount(),
+                            "status", savedOrder.getStatus().name()
+                    ))
+                    .build();
+
+            kafkaEventPublisher.publish(
+                    "order-events",
+                    savedOrder.getId().toString(),
+                    event
+            );
 
             cartClient.clearCart(userId);
 

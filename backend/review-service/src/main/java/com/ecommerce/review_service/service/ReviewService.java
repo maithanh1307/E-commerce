@@ -7,13 +7,18 @@ import com.ecommerce.review_service.dto.UpdateReviewRequestDto;
 import com.ecommerce.review_service.dto.order.OrderResponseDto;
 import com.ecommerce.review_service.entity.Review;
 import com.ecommerce.review_service.entity.ReviewStatus;
+import com.ecommerce.review_service.event.EcommerceEvent;
+import com.ecommerce.review_service.event.KafkaEventPublisher;
 import com.ecommerce.review_service.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     private final OrderClient orderClient;
+    private final KafkaEventPublisher kafkaEventPublisher;
 
 
     @Transactional
@@ -126,6 +132,26 @@ public class ReviewService {
 
         Review savedReview =
                 reviewRepository.save(review);
+
+        // kafka
+        EcommerceEvent event = EcommerceEvent.builder()
+                .eventId(UUID.randomUUID().toString())
+                .eventType("REVIEW_CREATED")
+                .occurredAt(LocalDateTime.now())
+                .userId(savedReview.getUserId())
+                .referenceId(savedReview.getProductId())
+                .referenceType("PRODUCT")
+                .payload(Map.of(
+                        "reviewId", savedReview.getId(),
+                        "rating", savedReview.getRating()
+                ))
+                .build();
+
+        kafkaEventPublisher.publish(
+                "review-events",
+                savedReview.getId().toString(),
+                event
+        );
 
         return toResponse(savedReview);
     }
