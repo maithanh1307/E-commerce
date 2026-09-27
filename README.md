@@ -82,6 +82,14 @@
     + if test review-service : localhost:8080/api/reviews/**
     + if test notification-service : localhost:8080/api/notifications/**
 
+** KAFKA
+- To check Kafka Service is running in Docker: docker exec -it ecommerce-kafka /opt/kafka/bin/kafka-topics.sh \ --bootstrap-server localhost:9092 \ --list
+- After kafka is running, then generate 3 topic for Kafka: order service, payment service and review service
+    + docker exec -it ecommerce-kafka /opt/kafka/bin/kafka-topics.sh \ --create \ --topic order-events \ --bootstrap-server localhost:9092 \ --partitions 1 \ --replication-factor 1 
+	+ docker exec -it ecommerce-kafka /opt/kafka/bin/kafka-topics.sh \ --create \ --topic payment-events \ --bootstrap-server localhost:9092 \ --partitions 1 \ --replication-factor 1
+	+ docker exec -it ecommerce-kafka /opt/kafka/bin/kafka-topics.sh \ --create \ --topic review-events \ --bootstrap-server localhost:9092 \ --partitions 1 \ --replication-factor 1 
+Kafka in this project that is use to send notification when order is created, payment is created and review is created
+
 **NOTE:
 - If you have the error about 'ecommerce%...' when run other service you should do some steps:
     + return to CMD docker in backend and enter 'docker exec -it ecommerce-mysql mysql -u root -proot'
