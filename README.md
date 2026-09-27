@@ -61,6 +61,14 @@
     * Run Service
     - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service -> Inventory Service -> Cart Service - Order Service -> Review Service
 
+10. Run Notification Service:
+    - Enter this command to run data:
+        Get-Content .\docker\mysql\notification\schema.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+        Get-Content .\docker\mysql\notification\seedData.sql -Raw | docker exec -i ecommerce-mysql mysql -u root -proot
+    * Run Service
+    - Open the IntelliJ IDEA to run java service: should run Registry Service -> run Auth Service -> run Product Service -> Inventory Service -> Cart Service - Order Service -> Review Service -> Notification Service
+
+
 ** API GATEWAY
 - To run Api Gateway, you should run 'docker compose up -d' and service registry -> auth-service -> product-service
 - then run api-gateway and test 'localhost:8080/api/...
@@ -72,6 +80,7 @@
     + if test payment-service : localhost:8080/api/payments/**
     + if test promotion-service : localhost:8080/api/promotions/**
     + if test review-service : localhost:8080/api/reviews/**
+    + if test notification-service : localhost:8080/api/notifications/**
 
 **NOTE:
 - If you have the error about 'ecommerce%...' when run other service you should do some steps:
