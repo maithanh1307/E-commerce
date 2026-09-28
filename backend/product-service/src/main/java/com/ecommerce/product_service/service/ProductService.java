@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductCacheService productCacheService;
 
     @Transactional
     public ProductResponseDto createProduct(ProductRequestDto request) {
@@ -36,21 +37,67 @@ public class ProductService {
     @Transactional(readOnly = true)
     public List<ProductResponseDto> getAllProducts() {
 
-        return productRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+        // check Redis
+        List<ProductResponseDto> cached =
+                productCacheService.getAll();
+
+        if (cached != null) {
+
+            System.out.println(
+                    "Redis cache HIT: products:all"
+            );
+
+            return cached;
+        }
+
+        System.out.println(
+                "Redis cache MISS: products:all"
+        );
+
+        // get product all
+        List<ProductResponseDto> products =
+                productRepository.findAll()
+                        .stream()
+                        .map(this::mapToResponse)
+                        .toList();
+
+        // save to Redis
+        productCacheService.saveAll(products);
+
+        return products;
     }
 
     @Transactional(readOnly = true)
     public ProductResponseDto getProductById(Long id) {
+        // check redis
+        ProductResponseDto cached =
+                productCacheService.get(id);
 
+        if (cached != null) {
+
+            System.out.println(
+                    "Redis cache HIT: product:" + id
+            );
+
+            return cached;
+        }
+
+        System.out.println(
+                "Redis cache MISS: product:" + id
+        );
+
+        // get product
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Product not found with id: " + id)
                 );
 
-        return mapToResponse(product);
+        ProductResponseDto productResponseDto =  mapToResponse(product);
+
+        // save to redis
+        productCacheService.save(productResponseDto);
+
+        return productResponseDto;
     }
 
     @Transactional
@@ -70,6 +117,12 @@ public class ProductService {
 
         Product updatedProduct = productRepository.save(product);
 
+        // delete old cache
+        productCacheService.delete(id);
+
+        // delete old cache for all products
+        productCacheService.deleteAll();
+
         return mapToResponse(updatedProduct);
     }
 
@@ -82,6 +135,8 @@ public class ProductService {
                 );
 
         productRepository.delete(product);
+        productCacheService.delete(id);
+        productCacheService.deleteAll();
     }
 
     @Transactional
@@ -93,6 +148,8 @@ public class ProductService {
                 );
 
         product.setStatus(status);
+        productCacheService.delete(id);
+        productCacheService.deleteAll();
 
         return mapToResponse(productRepository.save(product));
     }
