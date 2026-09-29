@@ -9,4 +9,5 @@ The goal of the project is to build a system that is **scalable, reduces couplin
 
 **Backend Documentation**
 To provide detailed information about the **system architecture, database, microservices, APIs, Kafka, Redis, and system workflows**, the project includes a separate **Backend Detail** document.
+
 Link documentation: https://docs.google.com/document/d/1WiQkY8Dbs26i3WAQQmcTjiP870zERb88/edit?usp=sharing&ouid=107037862397254553015&rtpof=true&sd=true
