@@ -19,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PromotionService {
     private final PromotionRepository promotionRepository;
+    private final PromotionCacheService promotionCacheService;
 
     @Transactional
     public PromotionResponseDto createPromotion(CreatePromotionRequestDto request) {
@@ -61,7 +62,11 @@ public class PromotionService {
 
         Promotion saved = promotionRepository.save(promotion);
 
-        return toResponse(saved);
+        PromotionResponseDto response = toResponse(saved);
+
+        promotionCacheService.save(response);
+
+        return response;
     }
 
     @Transactional(readOnly = true)
@@ -109,7 +114,7 @@ public class PromotionService {
                                 "Promotion not found: " + id
                         )
                 );
-
+        String oldCode = promotion.getCode();
         String code = normalizeCode(request.getCode());
 
         promotionRepository.findByCode(code)
@@ -149,7 +154,15 @@ public class PromotionService {
 
         Promotion saved = promotionRepository.save(promotion);
 
-        return toResponse(saved);
+        // delete old cache
+        promotionCacheService.delete(oldCode);
+
+        PromotionResponseDto response = toResponse(saved);
+
+        // save new cache
+        promotionCacheService.save(response);
+
+        return response;
     }
 
     @Transactional
@@ -162,7 +175,12 @@ public class PromotionService {
                         )
                 );
 
+        String code = promotion.getCode();
+
         promotionRepository.delete(promotion);
+
+        // delete old cache
+        promotionCacheService.delete(code);
     }
 
     @Transactional
@@ -178,6 +196,10 @@ public class PromotionService {
         promotion.setStatus(status);
 
         Promotion saved = promotionRepository.save(promotion);
+
+        promotionCacheService.delete(
+                saved.getCode()
+        );
 
         return toResponse(saved);
     }
@@ -263,6 +285,132 @@ public class PromotionService {
 //                .finalAmount(finalAmount)
 //                .build();
 //    }
+//    public PromotionValidationResponseDto validatePromotion(
+//            ValidatePromotionRequestDto request) {
+//
+//        String code = request.getCode()
+//                .trim()
+//                .toUpperCase();
+//
+//        Promotion promotion =
+//                promotionRepository.findByCode(code)
+//                        .orElseThrow(() ->
+//                                new RuntimeException(
+//                                        "Promotion not found: " + code
+//                                )
+//                        );
+//
+//        LocalDateTime now =
+//                LocalDateTime.now();
+//
+//        if (promotion.getStatus()
+//                != PromotionStatus.ACTIVE) {
+//
+//            return new PromotionValidationResponseDto(
+//                    false,
+//                    code,
+//                    "Promotion is inactive",
+//                    request.getOrderAmount(),
+//                    BigDecimal.ZERO,
+//                    request.getOrderAmount()
+//            );
+//        }
+//
+//        if (now.isBefore(promotion.getStartAt())
+//                || now.isAfter(promotion.getEndAt())) {
+//
+//            return new PromotionValidationResponseDto(
+//                    false,
+//                    code,
+//                    "Promotion is expired or not started",
+//                    request.getOrderAmount(),
+//                    BigDecimal.ZERO,
+//                    request.getOrderAmount()
+//            );
+//        }
+//
+//        if (promotion.getUsageLimit() != null
+//                && promotion.getUsedCount()
+//                >= promotion.getUsageLimit()) {
+//
+//            return new PromotionValidationResponseDto(
+//                    false,
+//                    code,
+//                    "Promotion usage limit reached",
+//                    request.getOrderAmount(),
+//                    BigDecimal.ZERO,
+//                    request.getOrderAmount()
+//            );
+//        }
+//
+//        if (request.getOrderAmount()
+//                .compareTo(
+//                        promotion.getMinimumOrderAmount()
+//                ) < 0) {
+//
+//            return new PromotionValidationResponseDto(
+//                    false,
+//                    code,
+//                    "Order amount does not meet minimum requirement",
+//                    request.getOrderAmount(),
+//                    BigDecimal.ZERO,
+//                    request.getOrderAmount()
+//            );
+//        }
+//
+//        BigDecimal discountAmount;
+//
+//        if (promotion.getDiscountType()
+//                == DiscountType.PERCENTAGE) {
+//
+//            discountAmount =
+//                    request.getOrderAmount()
+//                            .multiply(
+//                                    promotion.getDiscountValue()
+//                            )
+//                            .divide(
+//                                    BigDecimal.valueOf(100)
+//                            );
+//
+//            if (promotion.getMaximumDiscountAmount()
+//                    != null
+//                    && discountAmount.compareTo(
+//                    promotion.getMaximumDiscountAmount()
+//            ) > 0) {
+//
+//                discountAmount =
+//                        promotion.getMaximumDiscountAmount();
+//            }
+//
+//        } else {
+//
+//            discountAmount =
+//                    promotion.getDiscountValue();
+//        }
+//
+//        if (discountAmount.compareTo(
+//                request.getOrderAmount()
+//        ) > 0) {
+//
+//            discountAmount =
+//                    request.getOrderAmount();
+//        }
+//
+//        BigDecimal finalAmount =
+//                request.getOrderAmount()
+//                        .subtract(discountAmount);
+//
+//        return new PromotionValidationResponseDto(
+//                true,
+//                code,
+//                "Promotion is valid",
+//                request.getOrderAmount(),
+//                discountAmount,
+//                finalAmount
+//        );
+//    }
+
+    @Transactional(readOnly = true)
     public PromotionValidationResponseDto validatePromotion(
             ValidatePromotionRequestDto request) {
 
@@ -270,17 +418,30 @@ public class PromotionService {
                 .trim()
                 .toUpperCase();
 
-        Promotion promotion =
-                promotionRepository.findByCode(code)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Promotion not found: " + code
-                                )
-                        );
+        // check redis
+        PromotionResponseDto promotion =
+                promotionCacheService.get(code);
 
-        LocalDateTime now =
-                LocalDateTime.now();
+        // redis miss: get from mysql
+        if (promotion == null) {
 
+            Promotion entity =
+                    promotionRepository.findByCode(code)
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Promotion not found: " + code
+                                    )
+                            );
+
+            promotion = toResponse(entity);
+
+            // save to redis
+            promotionCacheService.save(promotion);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        // check status
         if (promotion.getStatus()
                 != PromotionStatus.ACTIVE) {
 
@@ -294,6 +455,7 @@ public class PromotionService {
             );
         }
 
+        // check date
         if (now.isBefore(promotion.getStartAt())
                 || now.isAfter(promotion.getEndAt())) {
 
@@ -307,6 +469,7 @@ public class PromotionService {
             );
         }
 
+        // check usage limit
         if (promotion.getUsageLimit() != null
                 && promotion.getUsedCount()
                 >= promotion.getUsageLimit()) {
@@ -321,6 +484,7 @@ public class PromotionService {
             );
         }
 
+        // check minimum order amount
         if (request.getOrderAmount()
                 .compareTo(
                         promotion.getMinimumOrderAmount()
@@ -336,6 +500,7 @@ public class PromotionService {
             );
         }
 
+        // cal discount
         BigDecimal discountAmount;
 
         if (promotion.getDiscountType()
@@ -347,9 +512,12 @@ public class PromotionService {
                                     promotion.getDiscountValue()
                             )
                             .divide(
-                                    BigDecimal.valueOf(100)
+                                    BigDecimal.valueOf(100),
+                                    2,
+                                    RoundingMode.HALF_UP
                             );
 
+            // maximum discount
             if (promotion.getMaximumDiscountAmount()
                     != null
                     && discountAmount.compareTo(
@@ -366,6 +534,9 @@ public class PromotionService {
                     promotion.getDiscountValue();
         }
 
+
+        //discount cannot exceed order amount
+
         if (discountAmount.compareTo(
                 request.getOrderAmount()
         ) > 0) {
@@ -374,9 +545,14 @@ public class PromotionService {
                     request.getOrderAmount();
         }
 
+        // cal final
         BigDecimal finalAmount =
                 request.getOrderAmount()
-                        .subtract(discountAmount);
+                        .subtract(discountAmount)
+                        .setScale(
+                                2,
+                                RoundingMode.HALF_UP
+                        );
 
         return new PromotionValidationResponseDto(
                 true,
