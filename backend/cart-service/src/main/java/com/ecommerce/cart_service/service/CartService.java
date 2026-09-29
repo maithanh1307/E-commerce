@@ -19,6 +19,8 @@ public class CartService {
 
     private final CartItemRepository cartItemRepository;
 
+    private final CartCacheService cartCacheService;
+
     @Transactional
     public CartResponseDto createCart(Long userId) {
 
@@ -42,9 +44,39 @@ public class CartService {
     @Transactional(readOnly = true)
     public CartResponseDto getCart(Long userId) {
 
-        Cart cart = getCartEntity(userId);
+        // check Redis
+        CartResponseDto cached =
+                cartCacheService.get(userId);
 
-        return toResponse(cart);
+        if (cached != null) {
+
+            System.out.println(
+                    "Redis cache HIT: cart:user:" + userId
+            );
+
+            return cached;
+        }
+
+        System.out.println(
+                "Redis cache MISS: cart:user:" + userId
+        );
+
+        // mysql
+        Cart cart = cartRepository
+                .findByUserId(userId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Cart not found for user: " + userId
+                        )
+                );
+
+        CartResponseDto response =
+                toResponse(cart);
+
+        // save to redis
+        cartCacheService.save(response);
+
+        return response;
     }
 
     @Transactional
@@ -79,6 +111,7 @@ public class CartService {
         }
 
         cartItemRepository.save(item);
+        cartCacheService.delete(userId);
 
         return toResponse(cart);
     }
@@ -143,6 +176,8 @@ public class CartService {
         cartItemRepository.deleteByCartId(
                 cart.getId()
         );
+
+        cartCacheService.delete(userId);
 
         cart.getItems().clear();
     }
