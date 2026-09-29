@@ -27,90 +27,10 @@ public class PaymentService {
     private final KafkaEventPublisher kafkaEventPublisher;
 
     @Transactional
-//    public PaymentResponseDto createPayment(
-//            CreatePaymentRequestDto request) {
-//
-//        // check exsiting payment
-//        paymentRepository
-//                .findByOrderId(request.getOrderId())
-//                .ifPresent(payment -> {
-//                    throw new RuntimeException(
-//                            "Payment already exists for order: "
-//                                    + request.getOrderId()
-//                    );
-//                });
-//
-//        // get order
-//        OrderResponseDto order =
-//                orderClient.getOrder(
-//                        request.getUserId(),
-//                        request.getOrderId()
-//                );
-//
-//        if (order == null) {
-//            throw new RuntimeException(
-//                    "Order not found"
-//            );
-//        }
-//
-//        // check user
-//        if (!order.getUserId()
-//                .equals(request.getUserId())) {
-//
-//            throw new RuntimeException(
-//                    "Order does not belong to user"
-//            );
-//        }
-//
-//        // check order status
-//        if (order.getStatus() !=
-//                com.ecommerce.payment_service.entity.OrderStatus
-//                        .PENDING_PAYMENT) {
-//
-//            throw new RuntimeException(
-//                    "Order is not waiting for payment"
-//            );
-//        }
-//
-//        // create payment
-//        Payment payment = Payment.builder()
-//                .orderId(order.getId())
-//                .userId(order.getUserId())
-//                .amount(order.getTotalAmount())
-//                .paymentMethod(request.getPaymentMethod())
-//                .status(PaymentStatus.PENDING)
-//                .build();
-//
-//        Payment saved =
-//                paymentRepository.save(payment);
-//
-//        // kafka
-//        EcommerceEvent event = EcommerceEvent.builder()
-//                .eventId(UUID.randomUUID().toString())
-//                .eventType("PAYMENT_SUCCESS")
-//                .occurredAt(LocalDateTime.now())
-//                .userId(payment.getUserId())
-//                .referenceId(payment.getOrderId())
-//                .referenceType("ORDER")
-//                .payload(Map.of(
-//                        "amount", payment.getAmount(),
-//                        "paymentMethod", payment.getPaymentMethod().name(),
-//                        "transactionId", payment.getTransactionId()
-//                ))
-//                .build();
-//
-//        kafkaEventPublisher.publish(
-//                "payment-events",
-//                payment.getOrderId().toString(),
-//                event
-//        );
-//
-//        return toResponse(saved);
-//    }
     public PaymentResponseDto createPayment(
             CreatePaymentRequestDto request) {
 
-        // 1. Check existing payment
+        // check existing payment
         paymentRepository
                 .findByOrderId(request.getOrderId())
                 .ifPresent(payment -> {
@@ -120,7 +40,7 @@ public class PaymentService {
                     );
                 });
 
-        // 2. Get order
+        // get order
         OrderResponseDto order =
                 orderClient.getOrder(
                         request.getUserId(),
@@ -133,7 +53,7 @@ public class PaymentService {
             );
         }
 
-        // 3. Check user
+        // check user
         if (!order.getUserId()
                 .equals(request.getUserId())) {
 
@@ -142,7 +62,7 @@ public class PaymentService {
             );
         }
 
-        // 4. Check order status
+        // check order status
         if (order.getStatus()
                 != OrderStatus.PENDING_PAYMENT) {
 
@@ -151,7 +71,7 @@ public class PaymentService {
             );
         }
 
-        // 5. Create payment
+        // create payment
         Payment payment = Payment.builder()
                 .orderId(order.getId())
                 .userId(order.getUserId())
@@ -163,7 +83,7 @@ public class PaymentService {
         Payment saved =
                 paymentRepository.save(payment);
 
-        // 6. Mock payment processing
+        // mock payment processing
         saved.setStatus(PaymentStatus.SUCCESS);
 
         saved.setTransactionId(
@@ -172,10 +92,10 @@ public class PaymentService {
 
         saved.setFailureReason(null);
 
-        // 7. Save successful payment
+        // save successful payment
         saved = paymentRepository.save(saved);
 
-        // 8. Create Kafka event
+        // create kafka event
         EcommerceEvent event = EcommerceEvent.builder()
                 .eventId(UUID.randomUUID().toString())
                 .eventType("PAYMENT_SUCCESS")
@@ -192,14 +112,13 @@ public class PaymentService {
                 ))
                 .build();
 
-        // 9. Publish Kafka event
+        // publish Kafka event
         kafkaEventPublisher.publish(
                 "payment-events",
                 saved.getOrderId().toString(),
                 event
         );
 
-        // 10. Return response
         return toResponse(saved);
     }
 
@@ -243,56 +162,6 @@ public class PaymentService {
                 .map(this::toResponse)
                 .toList();
     }
-
-//    @Transactional
-//    public PaymentResponseDto confirmPayment(
-//            Long id) {
-//
-//        Payment payment =
-//                paymentRepository.findById(id)
-//                        .orElseThrow(
-//                                () -> new RuntimeException(
-//                                        "Payment not found"
-//                                )
-//                        );
-//
-//        if (payment.getStatus() ==
-//                PaymentStatus.SUCCESS) {
-//
-//            return toResponse(payment);
-//        }
-//
-//        if (payment.getStatus() ==
-//                PaymentStatus.CANCELLED) {
-//
-//            throw new RuntimeException(
-//                    "Payment is cancelled"
-//            );
-//        }
-//
-//        // Mock transaction
-//        String transactionId =
-//                "MOCK-TXN-" +
-//                        UUID.randomUUID()
-//                                .toString()
-//                                .substring(0, 8)
-//                                .toUpperCase();
-//
-//        payment.setStatus(
-//                PaymentStatus.SUCCESS
-//        );
-//
-//        payment.setTransactionId(
-//                transactionId
-//        );
-//
-//        payment.setFailureReason(null);
-//
-//        Payment saved =
-//                paymentRepository.save(payment);
-//
-//        return toResponse(saved);
-//    }
 
     @Transactional
     public PaymentResponseDto confirmPayment(Long paymentId) {
