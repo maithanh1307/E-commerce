@@ -38,7 +38,9 @@ The system includes the following key features:
 - Event-Driven Architecture
 - Caching
 
-**Overall architecture:** see the [E-commerce Diagram](#) *(add diagram link here)*.
+**Overall architecture:** 
+
+![Overall architecture](src/diagram.png)
 
 ---
 
@@ -720,7 +722,7 @@ GET http://localhost:8080/api/products
 
 ### Complete E-commerce Flow
 
-*(add the end-to-end flow here)*
+![Complete E-commerce Flow](src/completeFlow.png)
 
 ---
 
