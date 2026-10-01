@@ -1,0 +1,37 @@
+.section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 4px 14px;
+}
+
+.section-head h2 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 26px;
+    color: var(--purple);
+}
+
+.section-head__icon {
+    color: var(--gold);
+}
+
+.section-head:has(.section-head__icon) h2 {
+    gap: 10px;
+}
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--purple);
+}
+
+.link:hover {
+    color: var(--pink);
+}
