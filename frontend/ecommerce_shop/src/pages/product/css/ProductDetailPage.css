@@ -1,0 +1,464 @@
+.pd {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 20px 48px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 36px 24px 64px;
+}
+
+/* gallery */
+.pd-gallery {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.pd-thumbs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.pd-thumbs button {
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    background: var(--pink-light);
+    cursor: pointer;
+}
+
+.pd-thumbs button.is-active {
+    border-color: var(--pink);
+}
+
+.pd-thumbs button:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: 2px;
+}
+
+.pd-thumbs img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.pd-stage {
+    position: relative;
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--pink-light);
+    box-shadow: var(--shadow);
+}
+
+.pd-stage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.pd-stage__placeholder {
+    color: var(--pink);
+    opacity: 0.7;
+}
+
+.pd-stage__fav {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 1;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--muted);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+}
+
+.pd-stage__fav.is-active {
+    color: #e0507f;
+}
+
+.pd-stage__fav:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: 2px;
+}
+
+/* info */
+.pd-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.pd-title {
+    margin: 0;
+    font: 800 34px/1.15 'Baloo 2', sans-serif;
+    color: #3f3a75;
+}
+
+.pd-price {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.pd-price strong {
+    font: 800 30px 'Baloo 2', sans-serif;
+    color: #e0507f;
+}
+
+.pd-price s {
+    font-size: 18px;
+    color: var(--muted);
+}
+
+.pd-price__badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--pink-soft);
+    font: 700 13px 'Nunito', sans-serif;
+    color: #d6558a;
+}
+
+.pd-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.pd-rating svg {
+    color: var(--gold);
+}
+
+.pd-rating b {
+    color: var(--text);
+}
+
+.pd-desc {
+    max-width: 52ch;
+    margin: 16px 0 4px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--purple);
+}
+
+.pd-opt {
+    margin: 18px 0 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.pd-opt legend,
+.pd-opt__label {
+    display: block;
+    padding: 0;
+    margin-bottom: 8px;
+    font: 700 14px 'Nunito', sans-serif;
+    color: var(--text);
+}
+
+.pd-swatches {
+    display: flex;
+    gap: 12px;
+}
+
+.pd-swatches button {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #e3deee;
+    cursor: pointer;
+}
+
+.pd-swatches button.is-active {
+    box-shadow: 0 0 0 2px var(--pink);
+}
+
+.pd-sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.pd-sizes button {
+    min-width: 88px;
+    padding: 9px 18px;
+    border: 1.5px solid #ebe6f3;
+    border-radius: 999px;
+    background: #fff;
+    font: 700 14px 'Nunito', sans-serif;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.pd-sizes button:hover {
+    border-color: var(--pink);
+}
+
+.pd-sizes button.is-active {
+    border-color: var(--pink);
+    background: var(--pink-light);
+    color: #d6558a;
+}
+
+.pd-swatches button:focus-visible,
+.pd-sizes button:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: 3px;
+}
+
+.pd-buy {
+    display: flex;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.pd-qty {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #ebe6f3;
+    border-radius: 14px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.pd-qty button {
+    width: 40px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.pd-qty button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.pd-qty input {
+    width: 46px;
+    border: 0;
+    background: transparent;
+    text-align: center;
+    font: 700 15px 'Nunito', sans-serif;
+    color: var(--text);
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.pd-qty input::-webkit-outer-spin-button,
+.pd-qty input::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+.pd-qty input:focus-visible,
+.pd-qty button:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: -2px;
+}
+
+.pd-stock {
+    margin: 8px 0 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #d6558a;
+}
+
+.pd-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 48px;
+    border-radius: 999px;
+    font: 700 15px 'Nunito', sans-serif;
+    cursor: pointer;
+}
+
+.pd-btn--primary {
+    flex: 1;
+    border: 0;
+    background: linear-gradient(135deg, #f58db1, #ec6a99);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(236, 106, 153, 0.3);
+}
+
+.pd-btn--soft {
+    width: 100%;
+    margin-top: 12px;
+    border: 1.5px solid var(--pink-soft);
+    background: var(--pink-light);
+    color: #d6558a;
+}
+
+.pd-btn:hover:not(:disabled) {
+    filter: brightness(0.97);
+}
+
+.pd-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.pd-btn:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: 3px;
+}
+
+/* perks */
+.pd-perks {
+    grid-column: 1 / -1;
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px 56px;
+}
+
+.pd-perks li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pd-perks__icon {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+}
+
+.pd-perks__icon.is-lilac {
+    background: var(--lilac);
+    color: var(--purple);
+}
+
+.pd-perks__icon.is-pink {
+    background: var(--pink-soft);
+    color: #e0507f;
+}
+
+.pd-perks strong {
+    display: block;
+    font-size: 14px;
+    color: #3f3a75;
+}
+
+.pd-perks small {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.pd-empty {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.pd-empty svg {
+    color: var(--pink);
+}
+
+.pd-empty h1 {
+    margin: 8px 0 0;
+    font: 800 26px 'Baloo 2', sans-serif;
+    color: #3f3a75;
+}
+
+.pd-empty p {
+    margin: 0 0 12px;
+}
+
+.pd-empty .pd-btn {
+    padding: 0 28px;
+    text-decoration: none;
+    flex: none;
+}
+
+
+.pd-empty {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    color: var(--muted);
+}
+ 
+.pd-rating__link { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.pd-rating__link:hover { color: #d6558a; }
+
+
+@media (max-width: 860px) {
+    .pd {
+        grid-template-columns: 1fr;
+        padding: 20px 16px 48px;
+    }
+
+    .pd-gallery {
+        flex-direction: column-reverse;
+    }
+
+    .pd-thumbs {
+        grid-auto-flow: column;
+        grid-auto-columns: 64px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .pd-stage {
+        width: 100%;
+    }
+
+    .pd-title {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pd-buy {
+        flex-direction: column;
+    }
+
+    .pd-qty {
+        align-self: flex-start;
+    }
+}

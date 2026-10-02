@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Star, PawPrint } from 'lucide-react';
 
 import type { Product } from '../../models/Product';
@@ -22,8 +23,8 @@ export default function ProductCard({
     const [wished, setWished] = useState(false);
     const [imageFailed, setImageFailed] = useState(false);
 
-    const { name, description, imageUrl, category, stockQuantity, rating, reviews } = product;
-    const price = Number(product.price); 
+    const { id, name, description, imageUrl, category, stockQuantity, rating, reviews } = product;
+    const price = Number(product.price);
     const soldOut = stockQuantity <= 0;
     const lowStock = !soldOut && stockQuantity <= LOW_STOCK_THRESHOLD;
     const showImage = Boolean(imageUrl) && !imageFailed;
@@ -52,7 +53,7 @@ export default function ProductCard({
                 {showImage ? (
                     <img
                         src={imageUrl!}
-                        alt={name}
+                        alt=""
                         loading="lazy"
                         onError={() => setImageFailed(true)}
                     />
@@ -66,7 +67,12 @@ export default function ProductCard({
             <div className="product-card__body">
                 {category && <span className="product-card__category">{category}</span>}
 
-                <h3 className="product-card__name" title={name}>{name}</h3>
+                <h3 className="product-card__name" title={name}>
+                    {/* navigate to product detail page */}
+                    <Link to={`/products/${id}`} className="product-card__link">
+                        {name}
+                    </Link>
+                </h3>
 
                 <p className="product-card__desc">
                     {description || 'No description yet.'}
