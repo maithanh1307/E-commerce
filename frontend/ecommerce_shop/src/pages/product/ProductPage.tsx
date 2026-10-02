@@ -9,6 +9,7 @@ import FilterSidebar, { DEFAULT_FILTERS, PRICE_RANGES, type Filters } from './co
 
 import './css/ProductPage.css';
 import './css/FilterSidebar.css';
+import { useCart } from '../../components/cart/CartContext';
 const PAGE_SIZE = 8;
 
 type SortKey = 'popularity' | 'price-asc' | 'price-desc' | 'rating';
@@ -30,7 +31,7 @@ export default function ProductsPage({ products = PRODUCTS }: Props) {
     const [keyword, setKeyword] = useState('');
     const [sort, setSort] = useState<SortKey>('popularity');
     const [page, setPage] = useState(1);
-    const [cartCount, setCartCount] = useState(0);
+    const { addItem } = useCart();
 
     const filtered = useMemo(() => {
         const priceTest = PRICE_RANGES.find((r) => r.key === filters.price)?.test;
@@ -91,7 +92,6 @@ export default function ProductsPage({ products = PRODUCTS }: Props) {
         <>
             <Header
                 active="Product"
-                cartCount={cartCount}
                 onSearch={(k) => { setKeyword(k); setPage(1); }}
             />
 
@@ -129,7 +129,7 @@ export default function ProductsPage({ products = PRODUCTS }: Props) {
                                 <ProductCard
                                     key={p.id}
                                     product={p}
-                                    onAddToCart={() => setCartCount((c) => c + 1)}
+                                    onAddToCart={(prod) => addItem(prod)}
                                 />
                             ))}
                         </div>

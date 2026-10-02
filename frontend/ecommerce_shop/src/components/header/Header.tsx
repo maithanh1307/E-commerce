@@ -7,11 +7,11 @@ import {
   User,
   Search,
   ChevronDown,
-  PawPrint,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import './Header.css';
 import logo from '../../assets/branch.png';
+import { useCart } from '../cart/CartContext';
 
 export type NavKey = 'Home' | 'Product' | 'Cart' | 'Order History' | 'Account';
 
@@ -30,8 +30,9 @@ type HeaderProps = {
   onSearch?: (keyword: string) => void;
 };
 
-export default function Header({ active = 'Home', cartCount = 0, avatar, onSearch }: HeaderProps) {
+export default function Header({ active = 'Home', avatar, onSearch }: HeaderProps) {
   const [keyword, setKeyword] = useState('');
+  const { count, openCart } = useCart();
 
   return (
     <header className="site-header">
@@ -80,10 +81,16 @@ export default function Header({ active = 'Home', cartCount = 0, avatar, onSearc
             </button>
           </form>
 
-          <a href="/cart" className="site-cart" aria-label={`Cart, ${cartCount} items`}>
+          <button
+            type="button"
+            className="site-cart"
+            aria-label={`Open cart, ${count} items`}
+            aria-haspopup="dialog"
+            onClick={openCart}
+          >
             <ShoppingCart size={26} />
-            {cartCount > 0 && <span className="site-cart__count">{cartCount}</span>}
-          </a>
+            {count > 0 && <span className="site-cart__count">{count}</span>}
+          </button>
 
           <button className="site-user" aria-label="Account menu">
             <span className="site-user__avatar">

@@ -1,0 +1,218 @@
+.cart-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(74, 69, 96, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s, visibility 0s 0.25s;
+}
+
+.cart-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s;
+}
+
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    width: min(420px, 100vw);
+    display: flex;
+    flex-direction: column;
+    background: #fffafb;
+    box-shadow: -12px 0 32px rgba(160, 120, 170, 0.18);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.28s ease, visibility 0s 0.28s;
+}
+
+.cart-drawer.is-open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.28s ease;
+}
+
+.cart-drawer:focus {
+    outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cart-overlay,
+    .cart-drawer {
+        transition: none;
+    }
+}
+
+.cart-drawer__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--pink-soft);
+}
+
+.cart-drawer__head h2 {
+    margin: 0;
+    font: 800 22px 'Baloo 2', sans-serif;
+    color: #3f3a75;
+}
+
+.cart-drawer__head button {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: var(--pink-light);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.cart-drawer__list {
+    flex: 1;
+    margin: 0;
+    padding: 8px 20px;
+    list-style: none;
+    overflow-y: auto;
+}
+
+.drawer-item {
+    display: grid;
+    grid-template-columns: 68px 1fr auto;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--pink-soft);
+}
+
+.drawer-item__thumb {
+    width: 68px;
+    height: 68px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 14px;
+    background: var(--pink-light);
+    color: var(--pink);
+}
+
+.drawer-item__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.drawer-item__info {
+    display: grid;
+    gap: 4px;
+    justify-items: start;
+    align-content: start;
+}
+
+.drawer-item__name {
+    font: 700 15px 'Nunito', sans-serif;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.drawer-item__name:hover {
+    color: #d6558a;
+}
+
+.drawer-item__info small {
+    color: var(--muted);
+}
+
+.drawer-item__side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.drawer-item__side strong {
+    color: #e0507f;
+}
+
+.drawer-item__side button {
+    border: 0;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 2px;
+}
+
+.drawer-item__side button:hover {
+    color: #d6455f;
+}
+
+.cart-drawer__foot {
+    display: grid;
+    gap: 10px;
+    padding: 16px 20px 20px;
+    border-top: 1px solid var(--pink-soft);
+    background: #fff;
+}
+
+.cart-drawer__subtotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+}
+
+.cart-drawer__subtotal strong {
+    font: 800 20px 'Baloo 2', sans-serif;
+    color: #e0507f;
+}
+
+.cart-drawer__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    padding: 0 28px;
+    border-radius: 999px;
+    font: 700 15px 'Nunito', sans-serif;
+    text-decoration: none;
+}
+
+.cart-drawer__btn--primary {
+    background: linear-gradient(135deg, #f58db1, #ec6a99);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(236, 106, 153, 0.3);
+}
+
+.cart-drawer__btn--soft {
+    border: 1.5px solid var(--pink-soft);
+    background: var(--pink-light);
+    color: #d6558a;
+}
+
+.cart-drawer__empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+}
+
+.cart-drawer__empty svg {
+    color: var(--pink);
+}
+
+.cart-drawer__empty p {
+    margin: 0;
+}
+
+.cart-drawer button:focus-visible,
+.cart-drawer a:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: 2px;
+}

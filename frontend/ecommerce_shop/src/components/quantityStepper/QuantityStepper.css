@@ -1,0 +1,49 @@
+.qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid #ebe6f3;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.qty button {
+    width: 36px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.qty button:hover:not(:disabled) {
+    background: var(--pink-light);
+}
+
+.qty button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.qty button:focus-visible {
+    outline: 2px solid var(--purple);
+    outline-offset: -2px;
+}
+
+.qty__value {
+    min-width: 34px;
+    text-align: center;
+    font: 700 15px 'Nunito', sans-serif;
+}
+
+.qty--sm button {
+    width: 28px;
+    height: 30px;
+}
+
+.qty--sm .qty__value {
+    min-width: 28px;
+    font-size: 14px;
+}
