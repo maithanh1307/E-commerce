@@ -14,14 +14,14 @@ import type { LucideIcon } from 'lucide-react';
 import type { Product } from '../../models/Product';
 import { PRODUCTS } from '../../data/product';
 import Header from '../../components/header/Header';
+import { useCart } from '../../components/cart/CartContext';
 import ReviewSection from './components/ReviewSection';
-import { getReviews } from '../../data/review';
 import RelatedProducts from './components/RelatedProduct';
+import { getReviews } from '../../data/review';
 
 import './css/ProductDetailPage.css';
 import './css/ReviewSection.css';
 import './css/RelatedProduct.css';
-
 
 export type ProductDetail = Product & {
     images?: string[];
@@ -96,19 +96,19 @@ function ProductDetailView({
     const [color, setColor] = useState(colors[0]?.name);
     const [size, setSize] = useState(sizes[0]);
     const [qty, setQty] = useState(1);
-    const [cartCount, setCartCount] = useState(0);
+    const { addItem } = useCart();
 
     const selection: Selection = { color, size, quantity: qty };
     const clamp = (n: number) => Math.min(maxQty, Math.max(1, n));
 
     const addToCart = () => {
-        setCartCount((c) => c + qty);
+        addItem(product, selection);
         onAddToCart?.(product, selection);
     };
 
     return (
         <>
-            <Header active="Product" cartCount={cartCount} />
+            <Header active="Product" />
 
             <main className="pd">
                 <section className="pd-gallery" aria-label="Product images">
@@ -283,7 +283,7 @@ function ProductDetailView({
                 <RelatedProducts
                     current={product}
                     products={PRODUCTS as Product[]}
-                    onAddToCart={() => setCartCount((c) => c + 1)}
+                    onAddToCart={(p) => addItem(p)}
                 />
             </main>
         </>
