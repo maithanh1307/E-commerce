@@ -1,0 +1,25 @@
+.related {
+    grid-column: 1 / -1;
+    margin-top: 24px;
+    padding-top: 32px;
+    border-top: 1px solid var(--pink-soft);
+}
+
+.related h2 {
+    margin: 0 0 20px;
+    font: 800 24px 'Baloo 2', sans-serif;
+    color: #3f3a75;
+}
+
+.related__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 520px) {
+    .related__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}

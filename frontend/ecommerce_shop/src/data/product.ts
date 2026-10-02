@@ -70,4 +70,70 @@ export const PRODUCTS: Product[] = [
     rating: 4.8,
     reviews: 64,
   },
+
+
+  {
+    id: 6,
+    name: 'Classic Teddy Bear',
+    description:
+      'A soft and cuddly teddy bear, perfect for gifts and everyday companionship.',
+    price: 15.99,
+    imageUrl: teddyBear,
+    category: 'Bears',
+    stockQuantity: 25,
+    rating: 4.8,
+    reviews: 120,
+  },
+
+  {
+    id: 7,
+    name: 'Bunny with Carrot',
+    description:
+      'An adorable bunny plush holding a cute carrot. Soft, cozy, and perfect for bunny lovers.',
+    price: 12.99,
+    imageUrl: bunny,
+    category: 'Rabbits',
+    stockQuantity: 18,
+    rating: 4.9,
+    reviews: 98,
+  },
+
+  {
+    id: 8,
+    name: 'Cute Penguin Plush',
+    description:
+      'A cute penguin plush with a soft texture, ideal for children and penguin lovers.',
+    price: 14.99,
+    imageUrl: penguin,
+    category: 'Others',
+    stockQuantity: 30,
+    rating: 4.7,
+    reviews: 95,
+  },
+
+  {
+    id: 9,
+    name: 'Fluffy Cat Plush',
+    description:
+      'A fluffy and adorable cat plush that makes a perfect companion for your room.',
+    price: 13.99,
+    imageUrl: cat,
+    category: 'Cats',
+    stockQuantity: 22,
+    rating: 4.6,
+    reviews: 76,
+  },
+
+  {
+    id: 10,
+    name: 'Little Dinosaur Plush',
+    description:
+      'A cute dinosaur plush with a soft body and friendly design for dinosaur fans.',
+    price: 16.99,
+    imageUrl: dino,
+    category: 'Others',
+    stockQuantity: 15,
+    rating: 4.8,
+    reviews: 64,
+  },
 ];
