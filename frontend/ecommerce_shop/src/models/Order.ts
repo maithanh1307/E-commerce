@@ -20,6 +20,15 @@ export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
 
 export type OrderItem = Pick<CartItem, 'productId' | 'name' | 'price' | 'quantity' | 'color' | 'size' | 'imageUrl'>;
 
+export type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled';
+
+export const STATUS_LABELS: Record<OrderStatus, string> = {
+    processing: 'Processing',
+    shipped: 'Shipped',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled',
+};
+
 export type Order = {
     id: string;
     createdAt: string;
@@ -31,5 +40,6 @@ export type Order = {
     discount: number;
     shipping: number;
     total: number;
-    status: 'pending' | 'paid';
+    status: OrderStatus; //order prodcessing status
+    paymentStatus: 'pending' | 'paid'; // payment status
 };
