@@ -295,6 +295,7 @@
     border-radius: 12px;
     font: 400 15px 'Nunito', sans-serif;
     color: var(--text);
+    background: #fff!important;
 }
 
 .co-field input[aria-invalid='true'],

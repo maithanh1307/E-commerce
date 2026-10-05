@@ -12,6 +12,7 @@ import type { LucideIcon } from 'lucide-react';
 import './Header.css';
 import logo from '../../assets/branch.png';
 import { useCart } from '../cart/CartContext';
+import { Link } from 'react-router-dom';
 
 export type NavKey = 'Home' | 'Product' | 'Cart' | 'Order History' | 'Account';
 
@@ -26,13 +27,14 @@ const NAV: { key: NavKey; icon: LucideIcon; href: string }[] = [
 type HeaderProps = {
   active?: NavKey;
   cartCount?: number;
-  avatar?: string; 
+  avatar?: string;
   onSearch?: (keyword: string) => void;
 };
 
 export default function Header({ active = 'Home', avatar, onSearch }: HeaderProps) {
   const [keyword, setKeyword] = useState('');
   const { count, openCart } = useCart();
+  const [showMenu, setShowMenu] = useState(false);
 
   return (
     <header className="site-header">
@@ -92,12 +94,36 @@ export default function Header({ active = 'Home', avatar, onSearch }: HeaderProp
             {count > 0 && <span className="site-cart__count">{count}</span>}
           </button>
 
-          <button className="site-user" aria-label="Account menu">
-            <span className="site-user__avatar">
-              {avatar ? <img src={avatar} alt="" /> : <User size={22} />}
-            </span>
-            <ChevronDown size={16} aria-hidden />
-          </button>
+          <div className="site-user-wrapper">
+            <button
+              type="button"
+              className="site-user"
+              aria-label="Account menu"
+              onClick={() => setShowMenu((prev) => !prev)}
+            >
+              <span className="site-user__avatar">
+                {avatar ? <img src={avatar} alt="" /> : <User size={22} />}
+              </span>
+
+              <ChevronDown
+                size={16}
+                aria-hidden
+                className={showMenu ? 'rotate' : ''}
+              />
+            </button>
+
+            {showMenu && (
+              <div className="site-user__dropdown">
+                <Link to="/account">
+                  Profile
+                </Link>
+
+                <button type="button" onClick={() => {}}>
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

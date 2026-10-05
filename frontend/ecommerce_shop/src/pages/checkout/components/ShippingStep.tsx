@@ -4,10 +4,10 @@ import type { Address } from '../../../models/Order';
 import { formatAddress, isValidPhone } from '../../../data/Address';
 
 
-type FormValues = Omit<Address, 'id'>;
+export type FormValues = Omit<Address, 'id'>;
 type Errors = Partial<Record<keyof FormValues, string>>;
 
-const EMPTY: FormValues = { fullName: '', phone: '', street: '', ward: '', district: '', city: '' };
+export const EMPTY: FormValues = { fullName: '', phone: '', street: '', ward: '', district: '', city: '' };
 
 type Props = {
     addresses: Address[];
@@ -18,6 +18,7 @@ type Props = {
 };
 
 export default function ShippingStep({ addresses, selectedId, onSelect, onSave, onContinue }: Props) {
+    // null: xem danh sách · 'new' hoặc Address: đang mở form thêm / sửa
     const [editing, setEditing] = useState<Address | 'new' | null>(null);
     const showForm = addresses.length === 0 || editing !== null;
     const editingAddress = editing && editing !== 'new' ? editing : undefined;
@@ -80,7 +81,7 @@ export default function ShippingStep({ addresses, selectedId, onSelect, onSave, 
     );
 }
 
-function AddressForm({
+export function AddressForm({
     initial,
     onSubmit,
     onCancel,
