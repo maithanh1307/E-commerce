@@ -7,6 +7,7 @@ import { CartProvider } from "../components/cart/CartContext";
 import CartPage from "../pages/cart/CartPage";
 import CartDrawer from "../components/cart/CartDrawer";
 import CheckoutPage from "../pages/checkout/CheckOutPage";
+import OrderHistoryPage from "../pages/order/OrderHistoryPage";
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -17,6 +18,7 @@ export default function AppRoutes() {
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/orders" element={<OrderHistoryPage />} />
         </Routes>
 
         <CartDrawer />

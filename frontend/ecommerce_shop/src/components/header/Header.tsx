@@ -20,7 +20,7 @@ const NAV: { key: NavKey; icon: LucideIcon; href: string }[] = [
   { key: 'Product', icon: LayoutGrid, href: '/products' },
   { key: 'Cart', icon: ShoppingCart, href: '/cart' },
   { key: 'Order History', icon: Clock, href: '/orders' },
-  { key: 'Account', icon: User, href: '/account' },
+  // { key: 'Account', icon: User, href: '/account' },
 ];
 
 type HeaderProps = {
